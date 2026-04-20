@@ -16,7 +16,18 @@ app.post('/api/auth/login', (req, res) => {
     res.json({ success: true, redirect: '/' });
   } else res.status(401).json({ success: false });
 });
-app.use(auth, express.static(path.join(__dirname, 'frontend', 'dist')));
+// Logout endpoint
+app.post('/api/auth/logout', (req, res) => {
+  req.session.destroy(err => {
+    res.clearCookie('connect.sid');
+    res.json({ success: true, redirect: '/login' });
+  });
+});
+
+// Serve static files without auth so PWA service worker can fetch updates and assets
+app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
+
+// Protect the HTML entry point
 app.get('/', auth, (req, res) => { res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html')); });
 app.get(/.*/, auth, (req, res) => { res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html')); });
 app.listen(PORT);
