@@ -72,7 +72,7 @@ app.get('/', requireAuth, (req, res) => {
 });
 
 // Fallback for SPA routing if needed
-app.get('*', requireAuth, (req, res) => {
+app.get('*'/ requireAuth, (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
 });
 
