@@ -925,3 +925,11 @@ window.sendAdminEmail = async function() {
 
 // Initial Kick-off
 render();
+
+// Force reload on back button to re-verify session
+window.addEventListener('pageshow', function(event) {
+  if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+    window.location.reload();
+  }
+});
+

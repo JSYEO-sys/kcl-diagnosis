@@ -9,6 +9,13 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(session({ secret: 'sec', resave: false, saveUninitialized: false }));
 const auth = (req, res, next) => { if (req.session.authenticated) next(); else res.redirect('/login'); };
+const noCache = (req, res, next) => {
+  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+  res.header('Expires', '-1');
+  res.header('Pragma', 'no-cache');
+  next();
+};
+
 app.get('/login', (req, res) => { res.sendFile(path.join(__dirname, 'frontend', 'public', 'login.html')); });
 app.post('/api/auth/login', (req, res) => {
   if (req.body.email === 'yeojunseok@gmail.com' && req.body.password === '9dnjf12dlf') {
@@ -24,10 +31,13 @@ app.post('/api/auth/logout', (req, res) => {
   });
 });
 
-// Serve static files without auth so PWA service worker can fetch updates and assets
-app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
-
 // Protect the HTML entry point
-app.get('/', auth, (req, res) => { res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html')); });
-app.get(/.*/, auth, (req, res) => { res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html')); });
+app.get('/', noCache, auth, (req, res) => { res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html')); });
+
+// Serve static files (exclude index.html from auto-serving to ensure auth check hits)
+app.use(express.static(path.join(__dirname, 'frontend', 'dist'), { index: false }));
+
+// Catch-all for SPA routing
+app.get(/.*/, noCache, auth, (req, res) => { res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html')); });
+
 app.listen(PORT);
