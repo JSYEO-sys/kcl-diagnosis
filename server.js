@@ -59,7 +59,7 @@ app.get('/', requireAuth, (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
 });
 
-app.get('/*', requireAuth, (req, res) => {
+app.get('/*:path*, requireAuth, (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
 });
 
