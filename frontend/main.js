@@ -68,12 +68,21 @@ let state = {
   adminData: JSON.parse(localStorage.getItem('diag_records') || '[]')
 };
 
+window.handleLogout = function() {
+  fetch('/api/auth/logout', { method: 'POST' })
+    .then(() => { window.location.href = '/login'; })
+    .catch((err) => { console.error('Logout error', err); window.location.href = '/login'; });
+};
+
 // Returns standard Header for the left action panel
 function getHeaderHTML() {
   return `
-    <div class="header-top">
-      <img src="./kcl_logo.png" class="logo-img" alt="KCL Logo" />
-      <div class="header-meta">
+    <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <img src="./kcl_logo.png" class="logo-img" alt="KCL Logo" style="margin-bottom: 0;" />
+        <span onclick="window.handleLogout()" style="cursor: pointer; color: rgba(255,255,255,0.4); font-size: 13px; font-weight: normal; transition: color 0.3s;" onmouseover="this.style.color='rgba(255,255,255,0.8)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">[Log out]</span>
+      </div>
+      <div class="header-meta" style="margin-bottom: 0;">
         v2.1.0<br/>Last update: 2026-04-07
       </div>
     </div>
