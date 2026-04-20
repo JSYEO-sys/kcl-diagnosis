@@ -18,5 +18,5 @@ app.post('/api/auth/login', (req, res) => {
 });
 app.use(auth, express.static(path.join(__dirname, 'frontend', 'dist')));
 app.get('/', auth, (req, res) => { res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html')); });
-app.get('/:path*', auth, (req, res) => { res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html')); });
+app.get('*', auth, (req, res) => { res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html')); });
 app.listen(PORT);
