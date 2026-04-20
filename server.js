@@ -11,10 +11,10 @@ app.use(session({ secret: 'sec', resave: false, saveUninitialized: false }));
 const auth = (req, res, next) => { if (req.session.authenticated) next(); else res.redirect('/login'); };
 app.get('/login', (req, res) => { res.sendFile(path.join(__dirname, 'frontend', 'public', 'login.html')); });
 app.post('/api/auth/login', (req, res) => {
-        if (req.body.email === 'yeojunseok@gmail.com' && req.body.password === '9dnjf12dlf') {
-                  req.session.authenticated = true;
-                  res.json({ success: true, redirect: '/' });
-        } else res.status(401).json({ success: false });
+  if (req.body.email === 'yeojunseok@gmail.com' && req.body.password === '9dnjf12dlf') {
+    req.session.authenticated = true;
+    res.json({ success: true, redirect: '/' });
+  } else res.status(401).json({ success: false });
 });
 app.use(auth, express.static(path.join(__dirname, 'frontend', 'dist')));
 app.get('/', auth, (req, res) => { res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html')); });
