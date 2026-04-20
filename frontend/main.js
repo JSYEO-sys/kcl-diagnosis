@@ -69,10 +69,38 @@ let state = {
 };
 
 window.handleLogout = function() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(regs => {
+      for(let reg of regs) reg.unregister();
+    });
+  }
+  if ('caches' in window) {
+    caches.keys().then(keys => {
+      for(let key of keys) caches.delete(key);
+    });
+  }
   fetch('/api/auth/logout', { method: 'POST' })
-    .then(() => { window.location.href = '/login'; })
-    .catch((err) => { console.error('Logout error', err); window.location.href = '/login'; });
+    .then(() => { 
+        localStorage.clear();
+        window.location.replace('/login'); 
+    })
+    .catch((err) => { 
+        console.error('Logout error', err); 
+        window.location.replace('/login'); 
+    });
 };
+
+// Verify session authenticity on load
+async function verifySession() {
+  try {
+    const res = await fetch('/api/auth/status');
+    if (!res.ok) window.location.replace('/login');
+  } catch (err) {
+    console.error('Session verification failed', err);
+  }
+}
+verifySession();
+
 
 // Returns standard Header for the left action panel
 function getHeaderHTML() {
